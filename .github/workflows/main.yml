@@ -30,10 +30,15 @@ jobs:
         run: |
           pip install bzt
 
-      - name: Download BlazeMeter Plugins
+      - name: Install JMeter Plugins Manager + BlazeMeter Plugins
         run: |
-          mkdir -p $JMETER_HOME/lib/ext
-          curl -L -o $JMETER_HOME/lib/ext/jmeter-bzm-plugins.jar https://repo1.maven.org/maven2/com/blazemeter/jmeter/plugins/jmeter-bzm-plugins/1.5/jmeter-bzm-plugins-1.5.jar
+          PLUGIN_VERSION=1.7
+          curl -O https://jmeter-plugins.org/files/packages/jpgc-cmdrunner-${PLUGIN_VERSION}.zip
+          unzip jpgc-cmdrunner-${PLUGIN_VERSION}.zip
+          java -cp cmdrunner-${PLUGIN_VERSION}.jar org.jmeterplugins.repository.PluginManagerCMDInstaller
+          java -cp .:lib/ext/PluginManagerCMD.jar org.jmeterplugins.repository.PluginManagerCMD \
+            install bzm-plugins
+
 
       - name: Run JMeter Test Plan
         run: |
