@@ -30,6 +30,11 @@ jobs:
         run: |
           pip install bzt
 
+      - name: Download BlazeMeter Plugins
+        run: |
+          mkdir -p $JMETER_HOME/lib/ext
+          curl -L -o $JMETER_HOME/lib/ext/jmeter-bzm-plugins.jar https://repo1.maven.org/maven2/com/blazemeter/jmeter/plugins/jmeter-bzm-plugins/1.5/jmeter-bzm-plugins-1.5.jar
+
       - name: Run JMeter Test Plan
         run: |
           mkdir -p jmeter-results
