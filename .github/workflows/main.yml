@@ -25,19 +25,8 @@ jobs:
           curl -sL https://downloads.apache.org//jmeter/binaries/apache-jmeter-$JMETER_VERSION.tgz | tar xz
           echo "JMETER_HOME=$PWD/apache-jmeter-$JMETER_VERSION" >> $GITHUB_ENV
           echo "$PWD/apache-jmeter-$JMETER_VERSION/bin" >> $GITHUB_PATH
-
-      - name: Install BlazeMeter CLI (Taurus)
-        run: |
-          pip install bzt
-
-      - name: Install JMeter Plugins Manager + BlazeMeter Plugins
-        run: |
-          PLUGIN_VERSION=1.7
-          curl -O https://jmeter-plugins.org/files/packages/jpgc-cmdrunner-${PLUGIN_VERSION}.zip
-          unzip jpgc-cmdrunner-${PLUGIN_VERSION}.zip
-          java -cp cmdrunner-${PLUGIN_VERSION}.jar org.jmeterplugins.repository.PluginManagerCMDInstaller
-          java -cp .:lib/ext/PluginManagerCMD.jar org.jmeterplugins.repository.PluginManagerCMD \
-            install bzm-plugins
+          mkdir -p apache-jmeter-$JMETER_VERSION/lib/ext
+          curl -L -o apache-jmeter-$JMETER_VERSION/lib/ext/jmeter-bzm-plugins.jar https://repo1.maven.org/maven2/com/blazemeter/jmeter/plugins/jmeter-bzm-plugins/1.5/jmeter-bzm-plugins-1.5.jar
 
 
       - name: Run JMeter Test Plan
