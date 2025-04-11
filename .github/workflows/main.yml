@@ -30,7 +30,7 @@ jobs:
         run: |
           mkdir -p jmeter-results
           jmeter -n \
-            -t ./ReqRes Test Plan.jmx \
+            -t ./"ReqRes Test Plan.jmx" \
             -l jmeter-results/results.jtl \
             -e -o jmeter-results/html-report
 
