@@ -13,7 +13,7 @@ jobs:
     - name: Run JMeter Tests
       uses: ./
       with:
-        test-plan-path: ./"ReqRes Test Plam.jmx"
+        test-plan-path: ./"ReqRes Test Plan.jmx"
         args: "-e -o ./reports/html/"
         
     - name: Upload Results
