@@ -26,6 +26,10 @@ jobs:
           echo "JMETER_HOME=$PWD/apache-jmeter-$JMETER_VERSION" >> $GITHUB_ENV
           echo "$PWD/apache-jmeter-$JMETER_VERSION/bin" >> $GITHUB_PATH
 
+      - name: Install BlazeMeter CLI (Taurus)
+        run: |
+          pip install bzt
+
       - name: Run JMeter Test Plan
         run: |
           mkdir -p jmeter-results
