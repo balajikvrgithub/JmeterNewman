@@ -1,0 +1,46 @@
+name: Run JMeter Test Plan
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  run-jmeter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Java (required for JMeter)
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Download and Set Up JMeter
+        run: |
+          JMETER_VERSION=5.6.3
+          curl -sL https://downloads.apache.org//jmeter/binaries/apache-jmeter-$JMETER_VERSION.tgz | tar xz
+          echo "JMETER_HOME=$PWD/apache-jmeter-$JMETER_VERSION" >> $GITHUB_ENV
+          echo "$PWD/apache-jmeter-$JMETER_VERSION/bin" >> $GITHUB_PATH
+
+      - name: Run JMeter Test Plan
+        run: |
+          mkdir -p jmeter-results
+          jmeter -n \
+            -t ./ReqRes Test Plan.jmx \
+            -l jmeter-results/results.jtl \
+            -e -o jmeter-results/html-report
+
+      - name: Upload HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-html-report
+          path: jmeter-results/html-report
+
+      - name: Download report artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: jmeter-html-report
