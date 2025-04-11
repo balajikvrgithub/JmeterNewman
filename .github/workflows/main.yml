@@ -19,23 +19,16 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Download and Set Up JMeter
+      - name: Download and Set Up JMeter with Ultimate Thread Group Plugin
         run: |
           JMETER_VERSION=5.6.3
           curl -sL https://downloads.apache.org//jmeter/binaries/apache-jmeter-$JMETER_VERSION.tgz | tar xz
           echo "JMETER_HOME=$PWD/apache-jmeter-$JMETER_VERSION" >> $GITHUB_ENV
           echo "$PWD/apache-jmeter-$JMETER_VERSION/bin" >> $GITHUB_PATH
-          mkdir -p apache-jmeter-$JMETER_VERSION/lib/ext
-          curl -L -o apache-jmeter-$JMETER_VERSION/lib/ext/jmeter-bzm-plugins.jar https://repo1.maven.org/maven2/com/blazemeter/jmeter/plugins/jmeter-bzm-plugins/1.5/jmeter-bzm-plugins-1.5.jar
 
-
-      - name: Run JMeter Test Plan
-        run: |
-          mkdir -p jmeter-results
-          jmeter -n \
-            -t ./"ReqRes Test Plan1.jmx" \
-            -l jmeter-results/results.jtl \
-            -e -o jmeter-results/html-report
+          # Install Ultimate Thread Group Plugin
+          curl -L -o apache-jmeter-$JMETER_VERSION/lib/ext/jmeter-plugins-casutg.jar \
+            https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-casutg/0.1/jmeter-plugins-casutg-0.1.jar
 
       - name: Upload HTML Report
         uses: actions/upload-artifact@v4
