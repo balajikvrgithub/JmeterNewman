@@ -5,35 +5,27 @@ on:
     branches: [main]
 
 jobs:
-  run-jmeter:
+  jmeter-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Download and extract JMeter
+      - name: Set up JMeter
         run: |
           wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.3.tgz
           tar -xzf apache-jmeter-5.6.3.tgz
           echo "JMETER_HOME=$PWD/apache-jmeter-5.6.3" >> $GITHUB_ENV
           echo "$PWD/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
 
-      - name: Install Plugin Manager and cmdrunner
+      - name: Install Plugin Manager + Custom Thread Groups
         run: |
           JMETER_HOME=$PWD/apache-jmeter-5.6.3
-          
-          # Install JMeter Plugins Manager
           curl -L -o $JMETER_HOME/lib/ext/jmeter-plugins-manager.jar https://jmeter-plugins.org/get/
-
-          # Download cmdrunner (required for PluginsManagerCMD.sh)
           curl -L -o $JMETER_HOME/lib/cmdrunner-2.3.jar https://repo1.maven.org/maven2/kg/apc/cmdrunner/2.3/cmdrunner-2.3.jar
-
-          # Install the CLI script
           java -cp $JMETER_HOME/lib/ext/jmeter-plugins-manager.jar org.jmeterplugins.repository.PluginManagerCMDInstaller
-
-          # Install the plugin that includes ArrivalsThreadGroup
-          $JMETER_HOME/bin/PluginsManagerCMD.sh install jmeter-plugins-casutg
+          $JMETER_HOME/bin/PluginsManagerCMD.sh install jpgc-casutg
 
       - name: Run JMeter Test Plan
         run: |
