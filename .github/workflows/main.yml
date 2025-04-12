@@ -1,39 +1,25 @@
 on: [push]
 jobs:
-  jmeter_job:
+  jmeter-test:
     runs-on: ubuntu-latest
-    name: JMeter jmx Test Execution
-    steps:      
-    - name: Checkout
-      uses: actions/checkout@v3
 
-    - name: Install Custom Thread Groups Plugin
-      run: |
-        sudo -i
-        mkdir -p $JMETER_HOME/lib/ext
-        curl -L -o $JMETER_HOME/lib/ext/jmeter-plugins-threads.jar \
-        https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-threads/2.1/jmeter-plugins-threads-2.1.jar
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
+      - name: Download and Set Up JMeter
+        run: |
+          wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.3.tgz
+          tar -xzf apache-jmeter-5.6.3.tgz
+          echo "JMETER_HOME=$PWD/apache-jmeter-5.6.3" >> $GITHUB_ENV
+          echo "$PWD/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
 
-    - name: PerfAction for JMeter
-      # You may pin to the exact commit or the version.
-      # uses: QAInsights/PerfAction@d16221318a6d261b1546b9dec9c0bb1739e3d480
-      uses: QAInsights/PerfAction@v5.6.3
-      with:
-        # JMeter test plan to execute
-        test-plan-path: './ReqRes-Test-Plan.jmx'
-          
-        
-    - name: Upload Results
-      uses: actions/upload-artifact@v4
-      with:
-        name: jmeter-results
-        path: 'C:\Users\Bala\.jenkins\workspace\Jmeter Github Jenkins-Integration\result.jtl'
-        if-no-files-found: error
+      - name: Install JMeter Custom Thread Groups Plugin
+        run: |
+          mkdir -p apache-jmeter-5.6.3/lib/ext
+          curl -L -o apache-jmeter-5.6.3/lib/ext/jmeter-plugins-threads.jar \
+            https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-threads/2.1/jmeter-plugins-threads-2.1.jar
 
-    - name: Upload HTML Reports
-      uses: actions/upload-artifact@v4
-      with:
-        name: jmeter-reports
-        path: reports
-        if-no-files-found: error
+      - name: Run JMeter Test
+        run: |
+          jmeter -n -t ReqRes-Test-Plan.jmx -l results.jtl -e -o html-report
