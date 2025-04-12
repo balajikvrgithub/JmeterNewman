@@ -9,6 +9,7 @@ jobs:
 
     - name: Install Custom Thread Groups Plugin
       run: |
+        sudo -i
         mkdir -p $JMETER_HOME/lib/ext
         curl -L -o $JMETER_HOME/lib/ext/jmeter-plugins-threads.jar \
         https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-threads/2.1/jmeter-plugins-threads-2.1.jar
