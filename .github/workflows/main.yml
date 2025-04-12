@@ -20,7 +20,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: jmeter-results
-        path: result.jtl
+        path: 'C:\Users\Bala\.jenkins\workspace\Jmeter Github Jenkins-Integration\result.jtl'
         if-no-files-found: error
 
     - name: Upload HTML Reports
