@@ -30,3 +30,13 @@ jobs:
       - name: Run JMeter Test Plan
         run: |
           jmeter -n -t ReqRes-Test-Plan.jmx -l results.jtl
+
+      - name: Generate HTML Report
+        run: |
+          jmeter -g results.jtl -o html-report
+
+      - name: Upload HTML Report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-html-report
+          path: html-report
