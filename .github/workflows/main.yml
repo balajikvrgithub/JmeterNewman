@@ -7,6 +7,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Install Custom Thread Groups Plugin
+      run: |
+        mkdir -p $JMETER_HOME/lib/ext
+        curl -L -o $JMETER_HOME/lib/ext/jmeter-plugins-threads.jar \
+        https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-threads/2.1/jmeter-plugins-threads-2.1.jar
+
+
     - name: PerfAction for JMeter
       # You may pin to the exact commit or the version.
       # uses: QAInsights/PerfAction@d16221318a6d261b1546b9dec9c0bb1739e3d480
