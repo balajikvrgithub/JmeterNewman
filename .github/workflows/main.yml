@@ -13,7 +13,7 @@ jobs:
       uses: QAInsights/PerfAction@v5.6.3
       with:
         # JMeter test plan to execute
-        test-plan-path: './ReqRes-Test-Plan.jmx"'
+        test-plan-path: './ReqRes-Test-Plan.jmx'
           
         
     - name: Upload Results
