@@ -7,14 +7,18 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Create reports directory
-      run: mkdir reports
-      
-    - name: Run JMeter Tests
-      uses: ./
+    - name: PerfAction for JMeter
+      # You may pin to the exact commit or the version.
+      # uses: QAInsights/PerfAction@d16221318a6d261b1546b9dec9c0bb1739e3d480
+      uses: QAInsights/PerfAction@v5.6.3
       with:
-        test-plan-path: ./"ReqRes Test Plan.jmx"
-        args: "-e -o ./reports/html/"
+        # JMeter test plan to execute
+        test-plan-path: './"ReqRes Test Plan.jmx"'
+        # Where to store the results e.g., result.csv
+        results-file: result.jtl
+        # Optional arguments. For more details https://jmeter.apache.org/usermanual/get-started.html#non_gui
+        #args: # optional
+          
         
     - name: Upload Results
       uses: actions/upload-artifact@v4
