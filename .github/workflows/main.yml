@@ -1,25 +1,39 @@
-on: [push]
+name: JMeter Githubb GithubActions
+
+on:
+  push:
+    branches: [main]
+
 jobs:
-  jmeter-test:
+  run-jmeter:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Download and Set Up JMeter
+      - name: Install JMeter
         run: |
           wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.3.tgz
           tar -xzf apache-jmeter-5.6.3.tgz
           echo "JMETER_HOME=$PWD/apache-jmeter-5.6.3" >> $GITHUB_ENV
           echo "$PWD/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
 
-      - name: Install JMeter Custom Thread Groups Plugin
+      - name: Install JMeter Plugins Manager and Required Plugins
         run: |
-          mkdir -p apache-jmeter-5.6.3/lib/ext
-          curl -L -o apache-jmeter-5.6.3/lib/ext/jmeter-plugins-threads.jar \
-            https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-threads/2.1/jmeter-plugins-threads-2.1.jar
+          JMETER_PLUGINS_DIR=apache-jmeter-5.6.3/lib/ext
+          JMETER_BIN_DIR=apache-jmeter-5.6.3/bin
+          
+          # Install Plugin Manager itself
+          curl -L -o $JMETER_PLUGINS_DIR/jmeter-plugins-manager.jar \
+            https://jmeter-plugins.org/get/
 
-      - name: Run JMeter Test
+          # Install plugins using the Plugins Manager CLI
+          java -cp $JMETER_PLUGINS_DIR/jmeter-plugins-manager.jar org.jmeterplugins.repository.PluginManagerCMDInstaller
+          
+          # Use CLI to install Custom Thread Groups (includes ArrivalsThreadGroup)
+          $JMETER_BIN_DIR/PluginsManagerCMD.sh install jmeter-plugins-casutg
+
+      - name: Run JMeter Test Plan
         run: |
-          jmeter -n -t ReqRes-Test-Plan.jmx -l results.jtl -e -o html-report
+          jmeter -n -t ReqRes-Test-Plan.jmx -l results.jtl
