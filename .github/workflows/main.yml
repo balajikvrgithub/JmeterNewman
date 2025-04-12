@@ -1,4 +1,4 @@
-name: JMeter Githubb GithubActions
+name: JMeter Test with Plugins
 
 on:
   push:
@@ -12,27 +12,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install JMeter
+      - name: Download and extract JMeter
         run: |
           wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.3.tgz
           tar -xzf apache-jmeter-5.6.3.tgz
           echo "JMETER_HOME=$PWD/apache-jmeter-5.6.3" >> $GITHUB_ENV
           echo "$PWD/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
 
-      - name: Install JMeter Plugins Manager and Required Plugins
+      - name: Install Plugin Manager and cmdrunner
         run: |
-          JMETER_PLUGINS_DIR=apache-jmeter-5.6.3/lib/ext
-          JMETER_BIN_DIR=apache-jmeter-5.6.3/bin
+          JMETER_HOME=$PWD/apache-jmeter-5.6.3
           
-          # Install Plugin Manager itself
-          curl -L -o $JMETER_PLUGINS_DIR/jmeter-plugins-manager.jar \
-            https://jmeter-plugins.org/get/
+          # Install JMeter Plugins Manager
+          curl -L -o $JMETER_HOME/lib/ext/jmeter-plugins-manager.jar https://jmeter-plugins.org/get/
 
-          # Install plugins using the Plugins Manager CLI
-          java -cp $JMETER_PLUGINS_DIR/jmeter-plugins-manager.jar org.jmeterplugins.repository.PluginManagerCMDInstaller
-          
-          # Use CLI to install Custom Thread Groups (includes ArrivalsThreadGroup)
-          $JMETER_BIN_DIR/PluginsManagerCMD.sh install jmeter-plugins-casutg
+          # Download cmdrunner (required for PluginsManagerCMD.sh)
+          curl -L -o $JMETER_HOME/lib/cmdrunner-2.3.jar https://repo1.maven.org/maven2/kg/apc/cmdrunner/2.3/cmdrunner-2.3.jar
+
+          # Install the CLI script
+          java -cp $JMETER_HOME/lib/ext/jmeter-plugins-manager.jar org.jmeterplugins.repository.PluginManagerCMDInstaller
+
+          # Install the plugin that includes ArrivalsThreadGroup
+          $JMETER_HOME/bin/PluginsManagerCMD.sh install jmeter-plugins-casutg
 
       - name: Run JMeter Test Plan
         run: |
